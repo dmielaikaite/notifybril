@@ -3,7 +3,8 @@
 
         var me = this;
         this.websocket_message = "";
-        this.connection = null;
+        this.message = {};
+        this.msg = "";
         var output = document.getElementById("output");
 
         this.init = function(){
@@ -30,17 +31,9 @@
                     var pre = document.createElement("p");
                     pre.style.wordWrap = "break-word";
                     me.websocket_message = JSON.parse(e.data);
-                    pre.innerHTML = me.websocket_message;
-                    // output.appendChild(pre.innerHTML.class);
-                    // var pre = document.createElement("p");
-                    // me.websocket_message = JSON.parse(e.data);
-
+                    pre.innerHTML = "class=" + me.websocket_message.class + ", message=" + me.websocket_message.message + ", type=" + me.websocket_message.type + ", user_timestamp=" + me.websocket_message.user_timestamp + ", timestamp=" + me.websocket_message.timestamp;
+                    output.appendChild(pre);
                     console.log(me.websocket_message);
-                    console.log(me.websocket_message.class);
-                    console.log(me.websocket_message.message);
-                    console.log(me.websocket_message.type);
-                    console.log(me.websocket_message.user_timestamp);
-                    // output.appendChild(pre);
                 };
 
                 connection.onclose = function(e)
