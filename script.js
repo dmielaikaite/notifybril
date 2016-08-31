@@ -1,48 +1,59 @@
-  angular.module("bril-notify", ['ui.router'])
-    .controller("Controller", function($rootScope, $http) {
+angular.module("bril-notify", ['ui.router'])
+    .controller("Controller", function ($rootScope, $http, $timeout) {
 
         var me = this;
-        this.websocket_message = "";
-        this.message = {};
+        this.websocket_message = [];
         this.msg = "";
-        var output = document.getElementById("output");
 
-        this.init = function(){
+        function set_color(data) {
+            if (data.type === "create") {
+                data.color_class = "bg-info";
+            }
+            else if (data.type === "danger") {
+                data.color_class = "bg-danger";
+            }
+        }
 
-            $http.get('config.json').then(function(response) {
+        function init() {
+            connection();
+        }
 
+        function connection() {
+            $http.get('config.json').then(function (response) {
                 this.websocket_url = response.data.websocket_url;
                 var connection = new WebSocket(this.websocket_url);
 
-                connection.onopen = function()
-                {
-                    connection.send("Message to send");
+
+                connection.onopen = function () {
                     console.log('connection is open');
                 };
 
-                connection.onerror = function(e)
-                {
-                    console.log(e);
-                    connection.send("error");
+                connection.onerror = function (e) {
+                    console.log("error");
                 };
 
-                connection.onmessage = function(e)
-                {
-                    var pre = document.createElement("p");
-                    pre.style.wordWrap = "break-word";
-                    me.websocket_message = JSON.parse(e.data);
-                    pre.innerHTML = "class=" + me.websocket_message.class + ", message=" + me.websocket_message.message + ", type=" + me.websocket_message.type + ", user_timestamp=" + me.websocket_message.user_timestamp + ", timestamp=" + me.websocket_message.timestamp;
-                    output.appendChild(pre);
-                    console.log(me.websocket_message);
+                connection.onmessage = function (e) {
+                    get_message(e);
                 };
 
-                connection.onclose = function(e)
-                {
+                connection.onclose = function (e) {
+                    connection.close();
                     console.log('connection close, readyState: ' + e.target.readyState);
                 };
             });
-        };
+        }
 
-        me.init();
 
-  });
+        function get_message(e) {
+            me.msg = JSON.parse(e.data);
+            //$scope.$apply => try
+            $timeout(function () {
+                set_color(me.msg);
+                me.websocket_message.push(me.msg);
+            });
+            console.log(me.msg);
+        }
+
+        window.addEventListener("load", init, false);
+
+    });
