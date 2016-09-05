@@ -1,3 +1,13 @@
 {
-	"websocket_url": "ws://kvm-s3562-1-ip151-15:6060"
+	"websocket_url": "ws://kvm-s3562-1-ip151-15:6061",
+	"tabs": [
+		{
+			"name": "default",
+			"accept-all": false,
+			"subscriptions": {
+				"runcontrol": ["create", "destroy"]
+			}
+		}, {
+			"name"
+		}]
 }

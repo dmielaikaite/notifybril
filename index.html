@@ -6,16 +6,29 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!--<script type="text/javascript" src="http://okfnlabs.org/elasticsearch.js/elasticsearch.js"></script>-->
     <script src="vendor/angular-ui-router.js"></script>
     <script src="script.js"></script>
 </head>
 
 <body ng-app="bril-notify">
 <div ng-controller="Controller as main">
+
+    <button type="submit" class="btn btn-primary" name="elastic_search" ng-click="main.request_messages()">Get old
+        messages
+    </button>
+    </br>
+
     <span ng-repeat="r in main.websocket_message track by $index">
       class={{r.class}}
       type=<span ng-class="r.color_class">{{r.type}}</span>
       message={{r.message}} timestamp={{r.timestamp}} user_timestamp={{r.user_timestamp}}</br>
+    </span>
+
+    <span ng-repeat="r in main.elasticsearch_message track by $index">
+    class={{r.class}}
+    type=<span ng-class="r.color_class">{{r.type}}</span>
+    message={{r.message}} timestamp={{r.timestamp}} user_timestamp={{r.user_timestamp}} host={{r.host}}</br>
     </span>
 
     <div id="output"></div>

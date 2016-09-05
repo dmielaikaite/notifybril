@@ -3,7 +3,11 @@ angular.module("bril-notify", ['ui.router'])
 
         var me = this;
         this.websocket_message = [];
+        this.elasticsearch_message = [];
         this.msg = "";
+        this.old_message = "";
+        var endpoint = 'http://srv-s2d16-15-01.cms:9200/.notifications/_search?source={"from": 0,"size": 10,"query": {"match_all": {}},"sort": [{"timestamp": {"order": "desc"}}],"_source": ["type","class","message","user_timestamp","host","http_host", "timestamp"]}';
+        // var endpoint = 'http://srv-s2d16-15-01.cms:9200/.notifications/_search?source={"from": 0,"size": 2,"query": {"match_all": {}},"sort": [{"timestamp": {"order": "desc"}}],"_source": ["type","class","message","user_timestamp","host","http_host"]}';
 
         function set_color(data) {
             if (data.type === "create") {
@@ -29,7 +33,7 @@ angular.module("bril-notify", ['ui.router'])
                 };
 
                 connection.onerror = function (e) {
-                    console.log("error");
+                    console.log("error", e.message);
                 };
 
                 connection.onmessage = function (e) {
@@ -37,7 +41,6 @@ angular.module("bril-notify", ['ui.router'])
                 };
 
                 connection.onclose = function (e) {
-                    connection.close();
                     console.log('connection close, readyState: ' + e.target.readyState);
                 };
             });
@@ -53,6 +56,24 @@ angular.module("bril-notify", ['ui.router'])
             });
             console.log(me.msg);
         }
+
+
+        this.request_messages = function () {
+            $http.post(endpoint).then(function (response) {
+
+                for (var i = 0; i < response.data.hits.hits.length; i++) {
+                    me.old_message = response.data.hits.hits[i]._source;
+                    me.elasticsearch_message.push(me.old_message);
+                }
+                console.log(me.elasticsearch_message);
+                // console.log(me.old_message);
+                // me.old_message = JSON.stringify(response.data.hits.hits[0]._source.message);
+                // console.log('old_message' + me.old_message);
+                // me.elasticsearch_message.push(me.old_message);
+                // console.log(response.data.hits.hits[0]);
+            });
+            console.log("requesting to get message");
+        };
 
         window.addEventListener("load", init, false);
 
