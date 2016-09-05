@@ -1,4 +1,4 @@
-angular.module("bril-notify", ['ui.router'])
+angular.module("bril-notify", ['ui.router', 'ui.bootstrap', 'ngTable'])
     .controller("Controller", function ($rootScope, $http, $timeout) {
 
         var me = this;
@@ -60,17 +60,12 @@ angular.module("bril-notify", ['ui.router'])
 
         this.request_messages = function () {
             $http.post(endpoint).then(function (response) {
-
                 for (var i = 0; i < response.data.hits.hits.length; i++) {
                     me.old_message = response.data.hits.hits[i]._source;
+                    set_color(me.old_message);
                     me.elasticsearch_message.push(me.old_message);
                 }
                 console.log(me.elasticsearch_message);
-                // console.log(me.old_message);
-                // me.old_message = JSON.stringify(response.data.hits.hits[0]._source.message);
-                // console.log('old_message' + me.old_message);
-                // me.elasticsearch_message.push(me.old_message);
-                // console.log(response.data.hits.hits[0]);
             });
             console.log("requesting to get message");
         };
