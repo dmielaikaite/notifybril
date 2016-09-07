@@ -1,0 +1,14 @@
+<div ng-controller="TabCtrl as tabctrl" ng-init="tabctrl.init(CoolService.tabArr[$index])">
+    Tab position: {{$index}}
+    <form class="form-inline">
+        <label>
+            Accept all:
+            <input type="checkbox" class="form-control" ng-model="tabctrl.handler.acceptAll">
+        </label>
+        <label>
+            Subscriptions:
+        </label>
+        <input type="text" class="form-control" ng-model="tabctrl.handler.subscriptions[0]">
+        <input type="text" class="form-control" ng-model="tabctrl.handler.subscriptions[1]">
+    </form>
+</div>

@@ -1,56 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html ng-app="brilnotify">
 <head>
-    <meta charset="utf-8"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.5/angular.min.js"></script>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
     <script src="https://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.1.3.min.js"></script>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
-    <!--<link rel="stylesheet" href="https://cdn.rawgit.com/esvit/ng-table/1.0.0/dist/ng-table.min.css">-->
-    <script src="https://cdn.rawgit.com/esvit/ng-table/1.0.0/dist/ng-table.js"></script>
-    <!--<script type="text/javascript" src="http://okfnlabs.org/elasticsearch.js/elasticsearch.js"></script>-->
-    <script src="vendor/angular-ui-router.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="app.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="script.js"></script>
+    <script type="text/javascript" src="cool-service.js"></script>
+    <script type="text/javascript" src="main-ctrl.js"></script>
+    <script type="text/javascript" src="tab-ctrl.js"></script>
+    <script src="vendor/angular-ui-router.js"></script>
 </head>
 
-<body ng-app="bril-notify">
-<div ng-controller="Controller as main">
+<body>
 
-    <button type="submit" class="btn btn-primary" name="elastic_search" ng-click="main.request_messages()">Get old
-        messages
-    </button>
+<div ng-controller="MainCtrl as main">
+
+    <br/> Active tab id: {{ main.activeTabIndex }}
+    <br/> Tab count: {{ main.tabs.length }}
+    <br/>
+
+    <uib-tabset active="main.activeTabIndex">
+        <uib-tab ng-repeat="tab in main.tabs track by tab.id" index="tab.id">
+            {{tab}}
+
+            <uib-tab-heading>
+                {{tab.title}}<span class="fa fa-close" ng-click="main.removeTab(tab.id)"></span>
+            </uib-tab-heading>
+            <ng-include src="'tab-template.html'"></ng-include>
+
+        </uib-tab>
+        <uib-tab index="-1" ng-click="main.addTab()">
+            <uib-tab-heading>
+                <span class="fa fa-plus-circle"></span>
+            </uib-tab-heading>
+        </uib-tab>
+    </uib-tabset>
+
+    </br>
     </br>
 
-    <div class="container">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>Timestamp</th>
-                <th>Class</th>
-                <th>Type</th>
-                <th>Message</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="r in main.websocket_message track by $index">
-                <td>{{r.timestamp}}</td>
-                <td>{{r.class}}</td>
-                <td><span ng-class="r.color_class">{{r.type}}</span></td>
-                <td>{{r.message}}</td>
-            </tr>
-
-            <tr ng-repeat="r in main.elasticsearch_message track by $index">
-                <td>{{r.timestamp}}</td>
-                <td>{{r.class}}</td>
-                <td><span ng-class="r.color_class">{{r.type}}</span></td>
-                <td>{{r.message}}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
 </div>
+
+<div class="container">
+    <ng-include src="'websocket_messages.html'"></ng-include>
+</div>
+
 </body>
 
 </html>

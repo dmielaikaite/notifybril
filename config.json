@@ -3,12 +3,26 @@
 	"tabs": [
 		{
 			"name": "default",
-			"accept-all": false,
+			"id" : 0,
+			"accept_all": true,
 			"subscriptions": {
 				"runcontrol": ["create", "destroy"]
 			}
 		},
 		{
-			"name" : "main"
+			"name" : "main",
+			"id" : 1,
+			"accept_all": false,
+			"subscriptions": {
+				"runcontrol": ["create"]
+			}
+		},
+			{
+			"name" : "second",
+			"id" : 2,
+			"accept_all": true,
+			"subscriptions": {
+				"runcontrol": ["destroy"]
+			}
 		}]
 }
