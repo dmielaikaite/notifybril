@@ -10,5 +10,37 @@
         </label>
         <input type="text" class="form-control" ng-model="tabctrl.handler.subscriptions[0]">
         <input type="text" class="form-control" ng-model="tabctrl.handler.subscriptions[1]">
+
+        <button type="submit" class="btn btn-primary" name="elastic_search" ng-click="tabctrl.request_messages()">Get
+            old
+            messages
+        </button>
+        </br>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Class</th>
+                <th>Type</th>
+                <th>Message</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="r in tabctrl.websocket_message track by $index">
+                <td>{{r.timestamp}}</td>
+                <td>{{r.class}}</td>
+                <td><span ng-class="r.color_class">{{r.type}}</span></td>
+                <td>{{r.message}}</td>
+            </tr>
+
+            <tr ng-repeat="r in tabctrl.elasticsearch_message track by $index">
+                <td>{{r.timestamp}}</td>
+                <td>{{r.class}}</td>
+                <td><span ng-class="r.color_class">{{r.type}}</span></td>
+                <td>{{r.message}}</td>
+            </tr>
+            </tbody>
+        </table>
+        <!--<ng-include src="'websocket_messages.html'"></ng-include>-->
     </form>
 </div>

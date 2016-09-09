@@ -8,6 +8,9 @@ angular.module('brilnotify').controller("Controller", ["$rootScope", '$http', "C
     this.old_message = "";
     var endpoint = 'http://srv-s2d16-15-01.cms:9200/.notifications/_search?source={"from": 0,"size": 10,"query": {"match_all": {}},"sort": [{"timestamp": {"order": "desc"}}],"_source": ["type","class","message","user_timestamp","host","http_host", "timestamp"]}';
 
+    $rootScope.CoolService = CoolService;
+    var config = $rootScope.CoolService.tabArr;
+
     function set_color(data) {
         if (data.type === "create") {
             data.color_class = "bg-info";
@@ -18,33 +21,21 @@ angular.module('brilnotify').controller("Controller", ["$rootScope", '$http', "C
     }
 
     function init() {
-        connection();
+        connection(config);
     }
 
-    function connection() {
+    function connection(config) {
         $http.get('config.json').then(function (response) {
             this.websocket_url = response.data.websocket_url;
             var connection = new WebSocket(this.websocket_url);
-            connection.onopen = function () {
-                console.log('connection is open');
-            };
-
-            connection.onerror = function (e) {
-                console.log("error", e.message);
-            };
 
             connection.onmessage = function (e) {
+                console.log(JSON.stringify(config));
                 get_message(e);
             };
 
-            connection.onclose = function (e) {
-                console.log('connection close, readyState: ' + e.target.readyState);
-            };
         });
     }
-
-    // $rootScope.CoolService = CoolService;
-    // var config = $rootScope.CoolService.tabArr[0].accept_all;
 
     function get_message(e) {
         me.msg = JSON.parse(e.data);
@@ -52,13 +43,6 @@ angular.module('brilnotify').controller("Controller", ["$rootScope", '$http', "C
         $timeout(function () {
             set_color(me.msg);
             me.websocket_message.push(me.msg);
-            // console.log('aaaaaa get_message ' + JSON.stringify(config));
-            // if (config){
-            //  me.websocket_message.push(me.msg);
-            // }
-            // else{
-            //     console.log('nooooo');
-            // }
         });
         console.log(me.msg);
     }

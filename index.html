@@ -12,11 +12,12 @@
     <script type="text/javascript" src="cool-service.js"></script>
     <script type="text/javascript" src="main-ctrl.js"></script>
     <script type="text/javascript" src="tab-ctrl.js"></script>
+    <script type="text/javascript" src="connection.js"></script>
     <script src="vendor/angular-ui-router.js"></script>
 </head>
 
 <body>
-
+<div ng-controller="Connection"> </div>
 <div ng-controller="MainCtrl as main">
 
     <br/> Active tab id: {{ main.activeTabIndex }}
@@ -45,9 +46,9 @@
 
 </div>
 
-<div class="container">
-    <ng-include src="'websocket_messages.html'"></ng-include>
-</div>
+<!--<div class="container">-->
+    <!--<ng-include src="'websocket_messages.html'"></ng-include>-->
+<!--</div>-->
 
 </body>
 

@@ -7,12 +7,12 @@ angular.module('brilnotify').service('CoolService', ["$timeout", function ($time
         this.tabArr = tabs;
     };
 
-
-    this.register = function (accept_all) {
+    this.register = function (config) {
         var newReceiver = {
             filters: [],
-            acceptAll: accept_all,
-            onMessage: null
+            acceptAll: config.accept_all,
+            onMessage: null,
+            type: config.runcontrol
         };
         console.log('register' + JSON.stringify(newReceiver));
         me.receivers.push(newReceiver);

@@ -23,6 +23,7 @@ angular.module('brilnotify').controller('MainCtrl', ["$timeout", "CoolService", 
                 accept_all: me.tabs_array[i].accept_all,
                 runcontrol: me.tabs_array[i].subscriptions.runcontrol
             };
+
             me.tabs.push(newTab);
         }
 
@@ -34,7 +35,22 @@ angular.module('brilnotify').controller('MainCtrl', ["$timeout", "CoolService", 
 
 
     this.addTab = function () {
-        console.log('new tag');
+        var newID = me.tabs.length -1 ;
+        newID = newID + 1;
+
+        newTab = {
+            id: newID,
+            title: "tab" + newID ,
+            accept_all: true,
+            runcontrol: ""
+        };
+
+        me.tabs.push(newTab);
+        $timeout(function () {
+            me.activeTabIndex = (newID);
+        }, 100);
+
+
     };
 
     this.removeTab = function (tabid) {
