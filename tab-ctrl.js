@@ -3,22 +3,14 @@ angular.module('brilnotify').controller('TabCtrl', ["$scope", "CoolService", "$r
     var me = this;
     this.handler = null;
     this.messages = [];
-    //
     this.websocket_message = [];
     this.elasticsearch_message = [];
     this.tabs_array = [];
     this.msg = "";
     this.old_message = "";
     var endpoint = 'http://srv-s2d16-15-01.cms:9200/.notifications/_search?source={"from": 0,"size": 10,"query": {"match_all": {}},"sort": [{"timestamp": {"order": "desc"}}],"_source": ["type","class","message","user_timestamp","host","http_host", "timestamp"]}';
-
     $rootScope.CoolService = CoolService;
     var config = $rootScope.CoolService.tabArr;
-
-    function get_message() {
-        console.log('get_message');
-        CoolService.get_message();
-        // console.log('me.handler.acceptAll' + me.handler.acceptAll);
-    }
 
     this.init = function (config) {
         console.log('init' + JSON.stringify(config));
@@ -28,10 +20,22 @@ angular.module('brilnotify').controller('TabCtrl', ["$scope", "CoolService", "$r
         var arg = me.handler.type;
         console.log('arg' + arg);
         me.handler.onMessage = messageAction;
-        get_message();
     };
 
+    function get_message() {
+        console.log('get_message');
+        CoolService.get_message();
+        // $http.get('config.json').then(function (response) {
+        //     this.websocket_url = response.data.websocket_url;
+        //     var connection = new WebSocket(this.websocket_url);
+        //     connection.onmessage = function (e) {
+        //         me.msg = JSON.parse(e.data);
+        //         CoolService.get_message(me.msg.type);
+        //     };
+        // });
+    }
 
+// CoolService.get_message();
     function messageAction(message) {
         console.log("in action", message);
         me.messages.unshift(message);
@@ -107,6 +111,18 @@ angular.module('brilnotify').controller('TabCtrl', ["$scope", "CoolService", "$r
         });
         console.log("requesting to get message");
     };
+
+    get_message();
+
+
+    // get_message();
+    // console.log('me.handler.acceptAll' + me.handler.acceptAll);
+    // console.log('me.handler.type' + me.handler.type);
+    // CoolService.send(me.msgType, me.msgContent);
+    // change_acceptAll();
+    // connection(config);
+    // init(config);
+
 
     // console.log('me.handler.acceptAll' + me.handler.acceptAll);
     // console.log('me.handler.type' + me.handler.type);
