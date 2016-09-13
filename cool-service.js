@@ -1,6 +1,10 @@
-angular.module('brilnotify').service('CoolService', ["$timeout", function ($timeout) {
+angular.module('brilnotify').service('CoolService', ["$timeout", '$http', function ($timeout, $http) {
+
     var me = this;
     this.receivers = [];
+    this.msg = "";
+    this.websocket_message = [];
+
 
     this.set_tabs = function (tabs) {
         console.log('service' + JSON.stringify(tabs));
@@ -19,6 +23,26 @@ angular.module('brilnotify').service('CoolService', ["$timeout", function ($time
         return newReceiver;
     };
 
+    this.get_message = function (handler) {
+        var receiver;
+        for (receiver of me.receivers) {
+            if (typeof receiver.onMessage !== "function") {
+                continue;
+            }
+            console.log('receiver vidujeeee' + JSON.stringify(receiver));
+            console.log("receiver has function");
+            getMessage(receiver, receiver.subscriptions);
+            console.log('receiver.subscriptions.indexOf(1)' + receiver.subscriptions);
+            // if (receiver.subscriptions.indexOf(1) !== -1) {
+            //     getMessage(receiver);
+            // }
+            // if (receiver.subscriptions.indexOf(type) !== -1) {
+            //     getMessage();
+            // }
+        }
+    };
+
+
     this.deregister = function (receiver) {
         var index = me.receivers.indexOf(receiver);
         while (index !== -1) {
@@ -27,32 +51,72 @@ angular.module('brilnotify').service('CoolService', ["$timeout", function ($time
         }
     };
 
-    this.send = function (type, content) {
-        console.log("in send", me.receivers);
-        var receiver;
-        for (receiver of me.receivers) {
-            if (typeof receiver.onMessage !== "function") {
-                continue;
-            }
-            console.log("receiver has function");
-            if (receiver.acceptAll) {
-                sendMessage(receiver, type, content);
-                continue;
-            }
-            if (receiver.subscriptions.indexOf(type) !== -1) {
-                sendMessage(receiver, type, content);
-            }
-        }
-    };
+    // this.send = function (type, content) {
+    //
+    //     var receiver;
+    //     for (receiver of me.receivers) {
+    //         if (typeof receiver.onMessage !== "function") {
+    //             console.log("in send", me.receivers);
+    //             continue;
+    //         }
+    //         console.log("receiver has function");
+    //         if (receiver.acceptAll) {
+    //             sendMessage(receiver, type, content);
+    //             continue;
+    //         }
+    //         if (receiver.subscriptions.indexOf(type) !== -1) {
+    //             sendMessage(receiver, type, content);
+    //         }
+    //     }
+    // };
 
-    function sendMessage(receiver, type, content) {
-        console.log("doing send");
-        // timeout in order not to block
-        $timeout(function () {
-            receiver.onMessage({
-                type: type,
-                content: content
-            });
+    function set_color(data) {
+        if (data.type === "create") {
+            data.color_class = "bg-info";
+        }
+        else if (data.type === "danger") {
+            data.color_class = "bg-danger";
+        }
+    }
+
+    function getMessage(receiver, type) {
+        $http.get('config.json').then(function (response) {
+            this.websocket_url = response.data.websocket_url;
+            var connection = new WebSocket(this.websocket_url);
+            connection.onmessage = function (e) {
+                me.msg = JSON.parse(e.data);
+                console.log('me.msg' + JSON.stringify(me.msg));
+                console.log('receiver.type' + JSON.stringify(receiver));
+                if (receiver.acceptAll) {
+                    $timeout(function () {
+                        receiver.onMessage({
+                            type: me.msg.type,
+                            timestamp: me.msg.timestamp,
+                            message: me.msg.message,
+                            class: me.msg.class
+                        });
+                    });
+                }
+                if (type[0] != null) {
+                    for (var i = 0; i < type.length; i++) {
+                        console.log('type[i]' + type[0][i]);
+                        if (me.msg.type.toString() == type[0][i]) {
+                            $timeout(function () {
+                                receiver.onMessage({
+                                    type: me.msg.type,
+                                    timestamp: me.msg.timestamp,
+                                    message: me.msg.message,
+                                    class: me.msg.class
+                                });
+                            });
+                        }
+                        else {
+                            console.log('wtf');
+                        }
+                    }
+                }
+            };
         });
     }
+
 }]);

@@ -75,7 +75,9 @@ angular.module('brilnotify').controller('MainCtrl', ["$timeout", "CoolService", 
 
     // init();
 
-    this.sendMessage = function () {
-        CoolService.send(me.msgType, me.msgContent);
-    };
+    // this.sendMessage = function () {
+    //     CoolService.send(me.msgType, me.msgContent);
+    // };
+
+
 }]);

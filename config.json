@@ -6,7 +6,7 @@
 			"id" : 0,
 			"accept_all": true,
 			"subscriptions": {
-				"runcontrol": ["create", "destroy"]
+				"runcontrol": [""]
 			}
 		},
 		{
@@ -14,13 +14,14 @@
 			"id" : 1,
 			"accept_all": false,
 			"subscriptions": {
-				"runcontrol": ["create"]
+				"runcontrol": ["create", "destroy"],
+				"fill": ["fill_closed"]
 			}
 		},
 			{
 			"name" : "second",
 			"id" : 2,
-			"accept_all": true,
+			"accept_all": false,
 			"subscriptions": {
 				"runcontrol": ["destroy"]
 			}
