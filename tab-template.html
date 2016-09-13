@@ -11,7 +11,7 @@
         <input type="text" class="form-control" ng-model="tabctrl.handler.subscriptions[0]" >
         <input type="text" class="form-control" ng-model="tabctrl.handler.subscriptions[1]">
 
-          <!--<span ng-repeat="msg in tabctrl.messages track by $index">{{msg}}<br /></span>-->
+          <span ng-repeat="msg in tabctrl.messages track by $index">{{msg}}<br /></span>
 
         <button type="submit" class="btn btn-primary" name="elastic_search" ng-click="tabctrl.request_messages()">Get
             old
@@ -28,7 +28,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr ng-repeat="r in tabctrl.messages track by $index">
+
+            <tr ng-repeat="r in tabctrl.messages track by $index" >
                 <td>{{r.timestamp}}</td>
                 <td>{{r.class}}</td>
                 <td><span ng-class="r.color_class">{{r.type}}</span></td>

@@ -24,13 +24,15 @@ angular.module('brilnotify').service('CoolService', ["$timeout", '$http', functi
     };
 
     this.get_message = function () {
-        // console.log('get_message get_message' + type);
         var receiver;
         for (receiver of me.receivers) {
             if (typeof receiver.onMessage !== "function") {
                 continue;
             }
-            getMessage(receiver, receiver.subscriptions);
+            if(receiver != null){
+             getMessage(receiver, receiver.subscriptions);
+                continue;
+            }
             console.log('receiver vidujeeee' + JSON.stringify(receiver));
             console.log('receiver.subscriptions.indexOf(1)' + receiver.subscriptions);
         }
@@ -45,24 +47,6 @@ angular.module('brilnotify').service('CoolService', ["$timeout", '$http', functi
         }
     };
 
-    // this.send = function (type, content) {
-    //
-    //     var receiver;
-    //     for (receiver of me.receivers) {
-    //         if (typeof receiver.onMessage !== "function") {
-    //             console.log("in send", me.receivers);
-    //             continue;
-    //         }
-    //         console.log("receiver has function");
-    //         if (receiver.acceptAll) {
-    //             sendMessage(receiver, type, content);
-    //             continue;
-    //         }
-    //         if (receiver.subscriptions.indexOf(type) !== -1) {
-    //             sendMessage(receiver, type, content);
-    //         }
-    //     }
-    // };
 
     function set_color(data) {
         if (data.type === "create") {
@@ -86,26 +70,25 @@ angular.module('brilnotify').service('CoolService', ["$timeout", '$http', functi
 
     function getMessage(receiver, subscriptions) {
         console.log("doing send");
-        console.log('subscriptions' + subscriptions);
         $http.get('config.json').then(function (response) {
             this.websocket_url = response.data.websocket_url;
             var connection = new WebSocket(this.websocket_url);
-            connection.onmessage = function (e) {
-                me.msg = JSON.parse(e.data);
-                console.log('receiver.type' + JSON.stringify(receiver));
-                console.log(receiver.subscriptions[0]);
-                if (subscriptions[0] != null) {
-                    var array = receiver.subscriptions[0].toString().split(',');
-                    for (var i in receiver.subscriptions) {
-                        if (me.msg.type.toString() == array[i]) {
-                            send_websocket_messaget(receiver);
+                connection.onmessage = function (e) {
+                    me.msg = JSON.parse(e.data);
+                    console.log('receiver.type' + JSON.stringify(receiver));
+                    console.log(receiver.subscriptions[0]);
+                    if (subscriptions[0] != null) {
+                        var array = receiver.subscriptions[0].toString().split(',');
+                        for (var i in receiver.subscriptions) {
+                            if (me.msg.type.toString() == array[i]) {
+                                send_websocket_messaget(receiver);
+                            }
                         }
                     }
-                }
-                if (receiver.acceptAll) {
-                    send_websocket_messaget(receiver);
-                }
-            };
+                    if (receiver.acceptAll) {
+                        send_websocket_messaget(receiver);
+                    }
+                };
         });
     }
 
