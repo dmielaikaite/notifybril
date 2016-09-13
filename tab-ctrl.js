@@ -11,7 +11,6 @@ angular.module('brilnotify').controller('TabCtrl', ["$scope", "CoolService", "$r
     var endpoint = 'http://srv-s2d16-15-01.cms:9200/.notifications/_search?source={"from": 0,"size": 10,"query": {"match_all": {}},"sort": [{"timestamp": {"order": "desc"}}],"_source": ["type","class","message","user_timestamp","host","http_host", "timestamp"]}';
     $rootScope.CoolService = CoolService;
     var config = $rootScope.CoolService.tabArr;
-    var quit = false;
 
     this.init = function (config) {
         console.log('init' + JSON.stringify(config));
@@ -53,15 +52,17 @@ angular.module('brilnotify').controller('TabCtrl', ["$scope", "CoolService", "$r
     }
 
     this.request_messages = function () {
-        $http.post(endpoint).then(function (response) {
-            for (var i = 0; i < response.data.hits.hits.length; i++) {
-                me.old_message = response.data.hits.hits[i]._source;
-                set_color(me.old_message);
-                me.elasticsearch_message.push(me.old_message);
-            }
-            console.log(me.elasticsearch_message);
-        });
-        console.log("requesting to get message");
+        console.log('requesting to get_old_message');
+        CoolService.get_old_message();
+
+        // $http.post(endpoint).then(function (response) {
+        //     for (var i = 0; i < response.data.hits.hits.length; i++) {
+        //         me.old_message = response.data.hits.hits[i]._source;
+        //         set_color(me.old_message);
+        //         me.elasticsearch_message.push(me.old_message);
+        //     }
+        //     console.log(JSON.stringify(me.elasticsearch_message));
+        // });
     };
 
 }]);

@@ -4,6 +4,8 @@ angular.module('brilnotify').service('CoolService', ["$timeout", '$http', functi
     this.receivers = [];
     this.msg = "";
     this.websocket_message = [];
+    var endpoint = 'http://srv-s2d16-15-01.cms:9200/.notifications/_search?source={"from": 0,"size": 10,"query": {"match_all": {}},"sort": [{"timestamp": {"order": "desc"}}],"_source": ["type","class","message","user_timestamp","host","http_host", "timestamp"]}';
+    this.elasticsearch_message = [];
 
 
     this.set_tabs = function (tabs) {
@@ -29,12 +31,26 @@ angular.module('brilnotify').service('CoolService', ["$timeout", '$http', functi
             if (typeof receiver.onMessage !== "function") {
                 continue;
             }
-            if(receiver != null){
-             getMessage(receiver, receiver.subscriptions);
+            if (receiver != null) {
+                getMessage(receiver, receiver.subscriptions);
                 continue;
             }
             console.log('receiver vidujeeee' + JSON.stringify(receiver));
             console.log('receiver.subscriptions.indexOf(1)' + receiver.subscriptions);
+        }
+    };
+
+    this.get_old_message = function () {
+        var receiver;
+        for (receiver of me.receivers) {
+            if (typeof receiver.onMessage !== "function") {
+                continue;
+            }
+            if (receiver != null) {
+                console.log(JSON.stringify(receiver));
+                getOldMessage(receiver, receiver.subscriptions);
+                // continue;
+            }
         }
     };
 
@@ -68,27 +84,50 @@ angular.module('brilnotify').service('CoolService', ["$timeout", '$http', functi
         });
     }
 
+    function getOldMessage(receiver, subscriptions) {
+        console.log("doing getOldMessage");
+        var array = receiver.subscriptions[0].toString().split(',');
+        console.log('array' + array);
+        console.log(typeof(subscriptions[0]) );
+        $http.post(endpoint).then(function (response) {
+            // var array = receiver.subscriptions[0].toString().split(',');
+            for (var i = 0; i < response.data.hits.hits.length; i++) {
+                me.old_message = response.data.hits.hits[i]._source;
+                // if (me.old_message.type == subscriptions[0]) {
+                    $timeout(function () {
+                        receiver.onMessage({
+                            type: me.old_message.type,
+                            timestamp: me.old_message.timestamp,
+                            message: me.old_message.message,
+                            class: me.old_message.class
+                        });
+                    });
+                // }
+            }
+        });
+    }
+
     function getMessage(receiver, subscriptions) {
         console.log("doing send");
         $http.get('config.json').then(function (response) {
             this.websocket_url = response.data.websocket_url;
             var connection = new WebSocket(this.websocket_url);
-                connection.onmessage = function (e) {
-                    me.msg = JSON.parse(e.data);
-                    console.log('receiver.type' + JSON.stringify(receiver));
-                    console.log(receiver.subscriptions[0]);
-                    if (subscriptions[0] != null) {
-                        var array = receiver.subscriptions[0].toString().split(',');
-                        for (var i in receiver.subscriptions) {
-                            if (me.msg.type.toString() == array[i]) {
-                                send_websocket_messaget(receiver);
-                            }
+            connection.onmessage = function (e) {
+                me.msg = JSON.parse(e.data);
+                console.log('receiver.type' + JSON.stringify(receiver));
+                console.log(receiver.subscriptions[0]);
+                if (subscriptions[0] != null) {
+                    var array = receiver.subscriptions[0].toString().split(',');
+                    for (var i in receiver.subscriptions) {
+                        if (me.msg.type.toString() == array[i]) {
+                            send_websocket_messaget(receiver);
                         }
                     }
-                    if (receiver.acceptAll) {
-                        send_websocket_messaget(receiver);
-                    }
-                };
+                }
+                if (receiver.acceptAll) {
+                    send_websocket_messaget(receiver);
+                }
+            };
         });
     }
 
