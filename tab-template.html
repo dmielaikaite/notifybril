@@ -13,7 +13,7 @@
 
           <!--<span ng-repeat="msg in tabctrl.messages track by $index">{{msg}}<br /></span>-->
 
-        <button type="submit" class="btn btn-primary" name="elastic_search" ng-click="tabctrl.request_messages()">Get
+        <button type="submit" class="btn btn-primary" name="elastic_search" ng-click="tabctrl.request_messages(tabctrl.handler.subscriptions[0])">Get
             old
             messages
         </button>
@@ -34,8 +34,8 @@
                 <td><span ng-class="r.color_class">{{r.type}}</span></td>
                 <td>{{r.message}}</td>
             </tr>
-
             <tr ng-repeat="r in tabctrl.elasticsearch_message track by $index">
+            <!--<tr ng-repeat="r in tabctrl.old_messages track by $index">-->
                 <td>{{r.timestamp}}</td>
                 <td>{{r.class}}</td>
                 <td><span ng-class="r.color_class">{{r.type}}</span></td>

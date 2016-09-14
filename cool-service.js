@@ -18,6 +18,7 @@ angular.module('brilnotify').service('CoolService', ["$timeout", '$http', functi
             filters: [],
             acceptAll: config.accept_all,
             onMessage: null,
+            onOldMessage: null,
             type: config.runcontrol
         };
         console.log('register' + JSON.stringify(newReceiver));
@@ -39,22 +40,7 @@ angular.module('brilnotify').service('CoolService', ["$timeout", '$http', functi
             console.log('receiver.subscriptions.indexOf(1)' + receiver.subscriptions);
         }
     };
-
-    this.get_old_message = function () {
-        var receiver;
-        for (receiver of me.receivers) {
-            if (typeof receiver.onMessage !== "function") {
-                continue;
-            }
-            if (receiver != null) {
-                console.log(JSON.stringify(receiver));
-                getOldMessage(receiver, receiver.subscriptions);
-                // continue;
-            }
-        }
-    };
-
-
+    
     this.deregister = function (receiver) {
         var index = me.receivers.indexOf(receiver);
         while (index !== -1) {
@@ -84,28 +70,6 @@ angular.module('brilnotify').service('CoolService', ["$timeout", '$http', functi
         });
     }
 
-    function getOldMessage(receiver, subscriptions) {
-        console.log("doing getOldMessage");
-        var array = receiver.subscriptions[0].toString().split(',');
-        console.log('array' + array);
-        console.log(typeof(subscriptions[0]) );
-        $http.post(endpoint).then(function (response) {
-            // var array = receiver.subscriptions[0].toString().split(',');
-            for (var i = 0; i < response.data.hits.hits.length; i++) {
-                me.old_message = response.data.hits.hits[i]._source;
-                // if (me.old_message.type == subscriptions[0]) {
-                    $timeout(function () {
-                        receiver.onMessage({
-                            type: me.old_message.type,
-                            timestamp: me.old_message.timestamp,
-                            message: me.old_message.message,
-                            class: me.old_message.class
-                        });
-                    });
-                // }
-            }
-        });
-    }
 
     function getMessage(receiver, subscriptions) {
         console.log("doing send");
