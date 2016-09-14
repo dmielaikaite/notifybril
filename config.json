@@ -4,9 +4,9 @@
 		{
 			"name": "default",
 			"id" : 0,
-			"accept_all": true,
+			"accept_all": false,
 			"subscriptions": {
-				"runcontrol": [""]
+				"runcontrol": ["aaa"]
 			}
 		},
 		{
@@ -14,7 +14,7 @@
 			"id" : 1,
 			"accept_all": false,
 			"subscriptions": {
-				"runcontrol": ["create", "destroy"],
+				"runcontrol": ["create"],
 				"fill": ["fill_closed"]
 			}
 		},
@@ -23,7 +23,7 @@
 			"id" : 2,
 			"accept_all": false,
 			"subscriptions": {
-				"runcontrol": ["destroy"]
+				"runcontrol": ["bb"]
 			}
 		}]
 }
